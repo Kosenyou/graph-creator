@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="appTitle">論文用グラフ作成</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- 背景の飾り（ぼんやりした色の丸など）を描くための要素です -->
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <!-- アプリ本体を囲むコンテナ -->
+  <div class="app-container">
+    <!-- メインの操作パネル（すりガラス風のデザイン） -->
+    <main class="app glass-panel">
+      <!-- 画面上部のヘッダー（タイトルやボタンが並ぶ場所） -->
+      <header class="topbar">
+        <div>
+          <h1 class="gradient-text" data-i18n="appTitleMain">論文用グラフ作成</h1>
+        </div>
+        <div class="actions" style="display: flex; align-items: center; gap: 8px;">
+          <select id="langSelect" style="padding: 4px; border-radius: 4px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+            <option value="ja" style="color:#000;">日本語</option>
+            <option value="en" style="color:#000;">English</option>
+          </select>
+          <button id="savePngButton" type="button" disabled data-i18n="savePng">PNG保存</button>
+          <button id="savePdfButton" type="button" disabled data-i18n="savePdf">PDF保存</button>
+          <button id="saveXlsxButton" type="button" disabled data-i18n="saveXlsx">XLSX保存</button>
+          <button id="saveXlsmButton" type="button" disabled data-i18n="saveXlsm">XLSM保存</button>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <!-- 左側の操作パネル（ファイル読み込みや設定項目） -->
+        <aside class="panel">
+          <label class="file-picker">
+            <span data-i18n="loadCsvExcel">CSV / Excel読み込み</span>
+            <!-- ファイルを選択するボタン -->
+            <input id="csvInput" type="file" accept=".csv,.xlsx,.xlsm,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12">
+          </label>
+
+
+          <label>
+            <span data-i18n="chartType">グラフ種類</span>
+            <select id="chartType" disabled>
+              <option value="line" data-i18n="lineChart">折れ線グラフ</option>
+              <option value="scatter" data-i18n="scatterPlot">散布図</option>
+              <option value="bar" data-i18n="barChart">棒グラフ</option>
+            </select>
+          </label>
+
+          <label>
+            <span data-i18n="legendPosition">凡例の位置</span>
+            <select id="legendPosition" disabled>
+              <option value="top-right" data-i18n="topRight">右上</option>
+              <option value="top-left" data-i18n="topLeft">左上</option>
+              <option value="bottom-right" data-i18n="bottomRight">右下</option>
+              <option value="bottom-left" data-i18n="bottomLeft">左下</option>
+            </select>
+          </label>
+
+          <label style="margin-top: 8px; display: block;">
+            <input type="checkbox" id="reverseXAxis" disabled>
+            <span data-i18n="reverseXAxis">X軸の左右を反転する</span>
+          </label>
+
+          <div id="seriesContainer" class="series-container"></div>
+          <button id="addSeriesBtn" class="secondary-btn" type="button" disabled style="margin-bottom: 12px;" data-i18n="addSeries">+ 系列を追加</button>
+
+          <label>
+            <span data-i18n="title">タイトル</span>
+            <input id="chartTitle" type="text" value="グラフ" disabled data-i18n-value="chart">
+          </label>
+
+          <div class="row-inputs">
+            <label>
+              <span data-i18n="xLabel">X軸ラベル</span>
+              <input id="xLabel" type="text" disabled>
+            </label>
+            <label>
+              <span data-i18n="yLabelLeft">左Y軸ラベル</span>
+              <input id="yLabel" type="text" disabled>
+            </label>
+            <label>
+              <span data-i18n="yLabelRight">右Y軸ラベル</span>
+              <input id="yLabelRight" type="text" disabled>
+            </label>
+          </div>
+
+          <button id="drawButton" class="primary-btn" type="button" disabled data-i18n="createChart">グラフ作成</button>
+          
+          <div id="message" class="message" role="status"></div>
+        </aside>
+
+        <section class="chart-area">
+          <div class="canvas-container">
+            <canvas id="chartCanvas" width="1200" height="760" aria-label="グラフ"></canvas>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="app-footer" style="text-align: center; margin-top: 16px; font-size: 12px; color: rgba(255,255,255,0.6); padding-bottom: 16px;">
+      <a href="terms.html" style="color: inherit; text-decoration: none; margin: 0 12px;">利用規約</a>
+      <a href="privacy.html" style="color: inherit; text-decoration: none; margin: 0 12px;">プライバシーポリシー</a>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
