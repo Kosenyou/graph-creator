@@ -41,5 +41,3 @@ CSVまたはExcelファイルを読み込み、折れ線グラフ・散布図・
   * `server.js` にてAPIエンドポイントと静的ファイルの配信を担当
 * **インフラ・デプロイ (Infrastructure)**
   * Render (Web Serviceとしてデプロイ)
-# graph_draw
-
