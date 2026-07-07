@@ -1,0 +1,13 @@
+# ローカルの依存関係とGit関連ファイルをビルド対象から除外
+node_modules
+npm-debug.log
+
+# バージョン管理・ビルド用ファイルを除外
+.git
+.gitignore
+Dockerfile
+.dockerignore
+
+# ドキュメント等を除外
+README.md
+論文用グラフ作成_機能紹介.pptx
