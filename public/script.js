@@ -64,7 +64,8 @@
       xColumnRequired: "X軸の列を選択してください。",
       yColumnRequired: "少なくとも1つのY軸の列を選択してください。",
       loading: "読み込み中...",
-      errorPrefix: "エラー: "
+      errorPrefix: "エラー: ",
+      disclaimer: "※作成したグラフは必ずしも全ての論文誌の規定に合致するとは限りません。投稿先の規定をご確認ください。"
     },
     en: {
       appTitle: "Paper Graph Creator",
@@ -97,7 +98,8 @@
       xColumnRequired: "Please select an X-axis column.",
       yColumnRequired: "Please select at least one Y-axis column.",
       loading: "Loading...",
-      errorPrefix: "Error: "
+      errorPrefix: "Error: ",
+      disclaimer: "* The created graphs may not necessarily meet the requirements of all academic journals. Please check the submission guidelines."
     }
   };
 
