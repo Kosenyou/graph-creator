@@ -35,8 +35,8 @@
 
   const translations = {
     ja: {
-      appTitle: "論文用グラフ作成",
-      appTitleMain: "論文用グラフ作成",
+      appTitle: "レポート用グラフ作成",
+      appTitleMain: "レポート用グラフ作成",
       savePng: "PNG保存",
       savePdf: "PDF保存",
       saveXlsx: "XLSX保存",

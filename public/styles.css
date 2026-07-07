@@ -125,6 +125,8 @@ button, input, select {
   align-items: center;
   flex: 1;
   min-width: 0;
+  transform: scale(0.7);
+  transform-origin: center;
 }
 
 .topbar h1 {
