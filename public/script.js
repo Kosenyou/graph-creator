@@ -28,6 +28,8 @@
   const message = document.getElementById("message");
   const canvas = document.getElementById("chartCanvas");
   const ctx = canvas.getContext("2d");
+  const BASE_WIDTH = 1200;
+  const BASE_HEIGHT = 760;
 
   // Removed AI and Auth elements
 
@@ -245,9 +247,54 @@
       setMessage("TIFF保存用のライブラリが読み込まれていません。");
       return;
     }
+    if (!hasChart || !currentChartSeries || currentChartSeries.length === 0) {
+      return;
+    }
+
+    const scale = 3; // 3倍 (3600 x 2280 ピクセル)
+
+    // 1. キャンバスの物理サイズを拡大
+    canvas.width = BASE_WIDTH * scale;
+    canvas.height = BASE_HEIGHT * scale;
+
+    // 2. 描画コンテキストをスケーリング
+    ctx.scale(scale, scale);
+
+    // 3. 拡大されたキャンバスに再描画
+    if (chartType.value === "scatter") {
+      renderScatter(currentChartSeries);
+    } else if (chartType.value === "bar") {
+      renderBar(currentChartSeries);
+    } else {
+      renderLine(currentChartSeries);
+    }
+
+    // 4. TIFFエンコード（300 DPIのメタデータを追加）
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const rgba = imgData.data;
-    const tiffBuffer = UTIF.encodeImage(rgba, canvas.width, canvas.height);
+
+    const dpi = 300;
+    const metadata = {
+      "t282": [dpi],  // XResolution
+      "t283": [dpi],  // YResolution
+      "t296": [2]     // ResolutionUnit (2 = インチ)
+    };
+    const tiffBuffer = UTIF.encodeImage(rgba, canvas.width, canvas.height, metadata);
+
+    // 5. キャンバスサイズを元の画面表示用に戻す
+    canvas.width = BASE_WIDTH;
+    canvas.height = BASE_HEIGHT;
+
+    // 6. 通常解像度で再描画
+    if (chartType.value === "scatter") {
+      renderScatter(currentChartSeries);
+    } else if (chartType.value === "bar") {
+      renderBar(currentChartSeries);
+    } else {
+      renderLine(currentChartSeries);
+    }
+
+    // 7. TIFFファイルを保存
     const blob = new Blob([tiffBuffer], { type: "image/tiff" });
     const link = document.createElement("a");
     link.download = `${currentFileName}.tiff`;
@@ -561,7 +608,7 @@
   function renderFrame(titleText) {
     clearCanvas();
     // 余白をさらに広げる (left: 120->160, right: 120->160, bottom: 140->160)
-    const plot = { left: 160, top: 40, right: canvas.width - 160, bottom: canvas.height - 160 };
+    const plot = { left: 160, top: 40, right: BASE_WIDTH - 160, bottom: BASE_HEIGHT - 160 };
     ctx.fillStyle = "#000000";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -569,7 +616,7 @@
 
     // 論文風に下部にタイトルを配置。プレフィックス「図: 」を付ける
     const textToDraw = titleText ? `図: ${titleText}` : "図: グラフ";
-    ctx.fillText(textToDraw, canvas.width / 2, canvas.height - 24);
+    ctx.fillText(textToDraw, BASE_WIDTH / 2, BASE_HEIGHT - 24);
 
     return plot;
   }
@@ -962,7 +1009,7 @@
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = "700 24px 'Times New Roman', Times, serif";
-    ctx.fillText(text || "CSVまたはExcelを読み込むとグラフを作成できます。", canvas.width / 2, canvas.height / 2);
+    ctx.fillText(text || "CSVまたはExcelを読み込むとグラフを作成できます。", BASE_WIDTH / 2, BASE_HEIGHT / 2);
   }
 
   /**
