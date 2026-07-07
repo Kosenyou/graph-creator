@@ -24,7 +24,6 @@
   const savePdfButton = document.getElementById("savePdfButton");
   const saveXlsxButton = document.getElementById("saveXlsxButton");
   const saveXlsmButton = document.getElementById("saveXlsmButton");
-  const saveTiffButton = document.getElementById("saveTiffButton");
   const message = document.getElementById("message");
   const canvas = document.getElementById("chartCanvas");
   const ctx = canvas.getContext("2d");
@@ -41,7 +40,6 @@
       savePdf: "PDF保存",
       saveXlsx: "XLSX保存",
       saveXlsm: "XLSM保存",
-      saveTiff: "TIFF保存",
       loadCsvExcel: "CSV / Excel読み込み",
       chartType: "グラフ種類",
       lineChart: "折れ線グラフ",
@@ -75,7 +73,6 @@
       savePdf: "Save PDF",
       saveXlsx: "Save XLSX",
       saveXlsm: "Save XLSM",
-      saveTiff: "Save TIFF",
       loadCsvExcel: "Load CSV / Excel",
       chartType: "Chart Type",
       lineChart: "Line Chart",
@@ -240,67 +237,6 @@
 
   saveXlsmButton.addEventListener("click", () => {
     saveExcelWorkbook("xlsm");
-  });
-
-  saveTiffButton.addEventListener("click", () => {
-    if (typeof UTIF === "undefined") {
-      setMessage("TIFF保存用のライブラリが読み込まれていません。");
-      return;
-    }
-    if (!hasChart || !currentChartSeries || currentChartSeries.length === 0) {
-      return;
-    }
-
-    const scale = 3; // 3倍 (3600 x 2280 ピクセル)
-
-    // 1. キャンバスの物理サイズを拡大
-    canvas.width = BASE_WIDTH * scale;
-    canvas.height = BASE_HEIGHT * scale;
-
-    // 2. 描画コンテキストをスケーリング
-    ctx.scale(scale, scale);
-
-    // 3. 拡大されたキャンバスに再描画
-    if (chartType.value === "scatter") {
-      renderScatter(currentChartSeries);
-    } else if (chartType.value === "bar") {
-      renderBar(currentChartSeries);
-    } else {
-      renderLine(currentChartSeries);
-    }
-
-    // 4. TIFFエンコード（300 DPIのメタデータを追加）
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const rgba = imgData.data;
-
-    const dpi = 300;
-    const metadata = {
-      "t282": [dpi],  // XResolution
-      "t283": [dpi],  // YResolution
-      "t296": [2]     // ResolutionUnit (2 = インチ)
-    };
-    const tiffBuffer = UTIF.encodeImage(rgba, canvas.width, canvas.height, metadata);
-
-    // 5. キャンバスサイズを元の画面表示用に戻す
-    canvas.width = BASE_WIDTH;
-    canvas.height = BASE_HEIGHT;
-
-    // 6. 通常解像度で再描画
-    if (chartType.value === "scatter") {
-      renderScatter(currentChartSeries);
-    } else if (chartType.value === "bar") {
-      renderBar(currentChartSeries);
-    } else {
-      renderLine(currentChartSeries);
-    }
-
-    // 7. TIFFファイルを保存
-    const blob = new Blob([tiffBuffer], { type: "image/tiff" });
-    const link = document.createElement("a");
-    link.download = `${currentFileName}.tiff`;
-    link.href = URL.createObjectURL(blob);
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
   });
 
   /**
@@ -596,7 +532,7 @@
    * グラフが正しく描画されている場合に保存を許可します。
    */
   function setSaveButtons(enabled) {
-    [savePngButton, savePdfButton, saveXlsxButton, saveXlsmButton, saveTiffButton].forEach((button) => {
+    [savePngButton, savePdfButton, saveXlsxButton, saveXlsmButton].forEach((button) => {
       button.disabled = !enabled;
     });
   }
