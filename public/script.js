@@ -541,7 +541,8 @@
    */
   function renderFrame(titleText) {
     clearCanvas();
-    const plot = { left: 96, top: 40, right: canvas.width - 96, bottom: canvas.height - 120 };
+    // 余白をさらに広げる (left: 120->160, right: 120->160, bottom: 140->160)
+    const plot = { left: 160, top: 40, right: canvas.width - 160, bottom: canvas.height - 160 };
     ctx.fillStyle = "#000000";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -847,7 +848,8 @@
         ctx.save();
         ctx.fillStyle = "#000000";
         ctx.font = "700 18px 'Times New Roman', Times, serif";
-        ctx.translate(isRight ? plot.right + 60 : plot.left - 60, (plot.top + plot.bottom) / 2);
+        // ラベルと値の距離をさらに広げる (80->110)
+        ctx.translate(isRight ? plot.right + 110 : plot.left - 110, (plot.top + plot.bottom) / 2);
         ctx.rotate(isRight ? Math.PI / 2 : -Math.PI / 2);
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -893,7 +895,8 @@
     ctx.font = "700 18px 'Times New Roman', Times, serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(xLabel.value || "X", (plot.left + plot.right) / 2, canvas.height - 70);
+    // X軸ラベルを少し上に移動 (40->75) して下の図タイトルと被らないようにする
+    ctx.fillText(xLabel.value || "X", (plot.left + plot.right) / 2, canvas.height - 75);
     ctx.restore();
   }
 
@@ -902,7 +905,13 @@
    * 斜め（反時計回りに36度）に回転させてキャンバス上に描画します。
    */
   function drawRotatedLabel(text, x, y) {
-    const value = text.length > 14 ? `${text.slice(0, 13)}...` : text;
+    let value = text;
+    if (typeof text === 'string' && text.toLowerCase().includes('e') && !isNaN(Number(text))) {
+      value = formatNumber(Number(text));
+    } else if (text && text.length > 14) {
+      value = `${text.slice(0, 13)}...`;
+    }
+    
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(-Math.PI / 5);
@@ -1560,34 +1569,27 @@
    * 小数点以下を丸めて見やすい形式の文字列に変換します。
    */
   function formatNumber(value) {
-    if (value === 0) return "0";
-    const abs = Math.abs(value);
-
-    if (abs >= 1e15 || abs < 1e-15) {
-      return value.toExponential(2);
+    if (value === 0) return "0.00";
+    
+    // 常に有効数字3桁 (toExponential(2)) で指数表記のパーツを取得
+    let str = value.toExponential(2);
+    let parts = str.split('e');
+    let coeff = parts[0];
+    let exp = parseInt(parts[1], 10);
+    
+    // 指数が0の場合はそのまま係数のみ返す (例: 1.25)
+    if (exp === 0) {
+      return coeff;
     }
-
-    const prefixes = [
-      { unit: "T", power: 1e12 },
-      { unit: "G", power: 1e9 },
-      { unit: "M", power: 1e6 },
-      { unit: "k", power: 1e3 },
-      { unit: "", power: 1 },
-      { unit: "m", power: 1e-3 },
-      { unit: "μ", power: 1e-6 },
-      { unit: "n", power: 1e-9 },
-      { unit: "p", power: 1e-12 }
-    ];
-
-    for (let i = 0; i < prefixes.length; i++) {
-      // Allow a small margin for floating point inaccuracies
-      if (abs >= prefixes[i].power * 0.999999) {
-        const scaled = value / prefixes[i].power;
-        return Number(scaled.toFixed(2)).toString() + prefixes[i].unit;
-      }
-    }
-
-    return Number(value.toFixed(2)).toString();
+    
+    // 指数部分を上付き文字に変換
+    const superscripts = {
+      '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+      '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻', '+': ''
+    };
+    let expStr = exp.toString().split('').map(c => superscripts[c] || c).join('');
+    
+    return coeff + ' × 10' + expStr;
   }
 
   /**
