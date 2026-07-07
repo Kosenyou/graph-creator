@@ -145,6 +145,7 @@ button, input, select {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  margin-left: 100px;
 }
 
 /* Workspace */
@@ -604,6 +605,7 @@ canvas {
   .actions {
     width: 100%;
     margin-top: 8px;
+    margin-left: 0;
   }
   .actions button {
     flex: 1;
