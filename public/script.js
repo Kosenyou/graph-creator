@@ -24,6 +24,7 @@
   const savePdfButton = document.getElementById("savePdfButton");
   const saveXlsxButton = document.getElementById("saveXlsxButton");
   const saveXlsmButton = document.getElementById("saveXlsmButton");
+  const saveTiffButton = document.getElementById("saveTiffButton");
   const message = document.getElementById("message");
   const canvas = document.getElementById("chartCanvas");
   const ctx = canvas.getContext("2d");
@@ -38,6 +39,7 @@
       savePdf: "PDF保存",
       saveXlsx: "XLSX保存",
       saveXlsm: "XLSM保存",
+      saveTiff: "TIFF保存",
       loadCsvExcel: "CSV / Excel読み込み",
       chartType: "グラフ種類",
       lineChart: "折れ線グラフ",
@@ -71,6 +73,7 @@
       savePdf: "Save PDF",
       saveXlsx: "Save XLSX",
       saveXlsm: "Save XLSM",
+      saveTiff: "Save TIFF",
       loadCsvExcel: "Load CSV / Excel",
       chartType: "Chart Type",
       lineChart: "Line Chart",
@@ -235,6 +238,22 @@
 
   saveXlsmButton.addEventListener("click", () => {
     saveExcelWorkbook("xlsm");
+  });
+
+  saveTiffButton.addEventListener("click", () => {
+    if (typeof UTIF === "undefined") {
+      setMessage("TIFF保存用のライブラリが読み込まれていません。");
+      return;
+    }
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const rgba = imgData.data;
+    const tiffBuffer = UTIF.encodeImage(rgba, canvas.width, canvas.height);
+    const blob = new Blob([tiffBuffer], { type: "image/tiff" });
+    const link = document.createElement("a");
+    link.download = `${currentFileName}.tiff`;
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
   });
 
   /**
@@ -530,7 +549,7 @@
    * グラフが正しく描画されている場合に保存を許可します。
    */
   function setSaveButtons(enabled) {
-    [savePngButton, savePdfButton, saveXlsxButton, saveXlsmButton].forEach((button) => {
+    [savePngButton, savePdfButton, saveXlsxButton, saveXlsmButton, saveTiffButton].forEach((button) => {
       button.disabled = !enabled;
     });
   }
