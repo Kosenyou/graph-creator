@@ -19,7 +19,7 @@
   const xLabel = document.getElementById("xLabel");
   const yLabel = document.getElementById("yLabel");
   const yLabelRight = document.getElementById("yLabelRight");
-  const drawButton = document.getElementById("drawButton");
+
   const savePngButton = document.getElementById("savePngButton");
   const savePdfButton = document.getElementById("savePdfButton");
   const saveXlsxButton = document.getElementById("saveXlsxButton");
@@ -207,7 +207,7 @@
     }
   });
 
-  drawButton.addEventListener("click", drawChart);
+
 
   // Removed AI analyze button and markdown parsing
 
@@ -242,7 +242,7 @@
    * データが読み込まれているかどうかに応じて操作可否を制御します。
    */
   function enableControls(enabled) {
-    [chartType, legendPosition, reverseXAxis, chartTitle, xLabel, yLabel, yLabelRight, drawButton, addSeriesBtn].forEach((control) => {
+    [chartType, legendPosition, reverseXAxis, chartTitle, xLabel, yLabel, yLabelRight, addSeriesBtn].forEach((control) => {
       if (control) control.disabled = !enabled;
     });
   }
