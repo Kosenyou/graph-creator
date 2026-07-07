@@ -116,6 +116,7 @@ button, input, select {
   padding: 20px 32px;
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid var(--glass-border);
+  flex-wrap: wrap;
 }
 
 .header-ad {
