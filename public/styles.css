@@ -585,7 +585,8 @@ canvas {
     padding: 0;
   }
   .app {
-    height: 100vh;
+    height: auto;
+    min-height: 100vh;
     border-radius: 0;
     border: none;
   }
@@ -613,10 +614,16 @@ canvas {
   .panel {
     border-right: 0;
     border-bottom: 1px solid var(--glass-border);
-    max-height: 50vh;
+    max-height: none;
+    overflow: visible;
+  }
+  .checkbox-group {
+    max-height: none;
+    overflow: visible;
   }
   .chart-area {
     padding: 16px;
+    overflow: visible;
   }
 }
 .series-container {
